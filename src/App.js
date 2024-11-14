@@ -1,5 +1,5 @@
 import { Oval } from "react-loader-spinner";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFrown } from "@fortawesome/free-solid-svg-icons";
@@ -12,53 +12,35 @@ function Grp204WeatherApp() {
     data: {},
     error: false,
   });
+  const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+    const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(savedFavorites);
+  }, []);
 
   const toDateFunction = () => {
-    const months = [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre",
-    ];
-    const WeekDays = [
-      "Dimanche",
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi",
-    ];
-    const currentDate = new Date();
-    return `${WeekDays[currentDate.getDay()]} ${currentDate.getDate()} ${
-      months[currentDate.getMonth()]
-    }`;
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return new Date().toLocaleDateString(undefined, options);
   };
 
   const search = async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      if (input.trim() === "") return; // Prevent empty search
+      if (input.trim() === "") return;
 
       setWeather({ ...weather, loading: true });
       const url = "https://api.openweathermap.org/data/2.5/weather";
-      const api_key = process.env.REACT_APP_API_KEY; // Use environment variable
+      const api_key = process.env.REACT_APP_API_KEY;
 
       try {
         const res = await axios.get(url, {
-          params: {
-            q: input,
-            units: "metric",
-            appid: api_key,
-          },
+          params: { q: input, units: "metric", appid: api_key },
         });
         setWeather({ data: res.data, loading: false, error: false });
       } catch (error) {
@@ -66,6 +48,14 @@ function Grp204WeatherApp() {
         setWeather({ ...weather, data: {}, error: true });
         setInput("");
       }
+    }
+  };
+
+  const addToFavorites = (city) => {
+    if (city && !favorites.includes(city)) {
+      const updatedFavorites = [...favorites, city];
+      setFavorites(updatedFavorites);
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
     }
   };
 
@@ -81,6 +71,9 @@ function Grp204WeatherApp() {
           onChange={(event) => setInput(event.target.value)}
           onKeyPress={search}
         />
+        <button onClick={() => addToFavorites(weather.data.name)}>
+          Ajouter aux favoris
+        </button>
       </div>
       {weather.loading && (
         <Oval type="Oval" color="black" height={100} width={100} />
@@ -105,6 +98,20 @@ function Grp204WeatherApp() {
           <p>Vitesse du vent : {weather.data.wind.speed} m/s</p>
         </div>
       )}
+      <div className="favorites-list">
+        {favorites.map((city, index) => (
+          <div
+            key={index}
+            onClick={() => {
+              setInput(city);
+              search({ key: "Enter" });
+            }}
+            className="favorite-city"
+          >
+            {city}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
