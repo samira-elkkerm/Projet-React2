@@ -1,0 +1,65 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.App {
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+}
+
+.app-name {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.city-search {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.Oval {
+    margin-top: 20px;
+}
+
+.error-message {
+    color: red;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.error-message span {
+    margin-left: 8px;
+}
+
+h2 {
+    font-size: 20px;
+    color: #007bff;
+}
+
+img {
+    margin-top: 10px;
+}
+
+p {
+    font-size: 16px;
+}
